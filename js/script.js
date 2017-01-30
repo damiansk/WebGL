@@ -8,6 +8,8 @@
 	const controlsRange = document.querySelectorAll( '.range' );
 	const controlsRange1 = document.querySelectorAll( '.range1' );
 
+	const tetraButton = document.querySelector( '#tetra' );
+
 	let animationAxies = {
 		x: false,
 		y: true,
@@ -17,8 +19,9 @@
 	let position;
 	let color;
 
-	let triangleVertexBuffer;
-	let triangleFacesBuffer;
+	let triangleVertexBuffer = [];
+	let triangleFacesBuffer = [];
+	let pointsCount = 0;
 
 	let PosMatrix;
 	let MovMatrix;
@@ -27,15 +30,14 @@
 	let matrixMovement;
 	let matrixView;
 
-	let triangleVerticlesArray = [];
+	let triangleVertices = [];
+	let triangleFaces = [];
 
 	let rotationSpeed = 0.001;
 	let zoomRatio = -1550;
 
 	let animationID;
 
-
-	let pointsCount = 0;
 
 	let inheritCount = 2;
 	let dispersion = 50;
@@ -112,18 +114,11 @@
 	}
 
 	function gl_initBuffers() {
-		//TODO
-		const triangleVertices = [];
-
-
 		triangleVertexBuffer = gl_ctx.createBuffer();
 		gl_ctx.bindBuffer( gl_ctx.ARRAY_BUFFER, triangleVertexBuffer );
 		gl_ctx.bufferData( gl_ctx.ARRAY_BUFFER,
 			new Float32Array( triangleVertices ),
 			gl_ctx.STATIC_DRAW ) ;
-
-		//TODO
-		const triangleFaces = [];
 
 		triangleFacesBuffer = gl_ctx.createBuffer();
 		gl_ctx.bindBuffer( gl_ctx.ELEMENT_ARRAY_BUFFER, triangleFacesBuffer );
@@ -174,8 +169,7 @@
 			gl_ctx.bindBuffer( gl_ctx.ARRAY_BUFFER, triangleVertexBuffer );
 			gl_ctx.bindBuffer( gl_ctx.ELEMENT_ARRAY_BUFFER, triangleFacesBuffer );
 
-			//TODO
-			gl_ctx.drawElements( gl_ctx.TRIANGLES, 0 , gl_ctx.UNSIGNED_SHORT, 0 );
+			gl_ctx.drawElements( gl_ctx.TRIANGLES, pointsCount , gl_ctx.UNSIGNED_SHORT, 0 );
 			gl_ctx.flush();
 
 			animationID = window.requestAnimationFrame( animate );
@@ -201,16 +195,14 @@
 
 		window.cancelAnimationFrame( animationID );
 
-		triangleVerticlesArray = [];
-
 		runAnimation();
 	}
 
-	function updateRotationAxies () {
+	function updateAutoRotation () {
 		animationAxies[this.dataset.axis] = this.checked;
 	}
 
-	function updateAnimation () {
+	function updateSpeedOrZoom () {
 		if ( this.id === 'zoom' ) {
 			MATRIX.translateZ( matrixView, this.value );
 		}
@@ -219,30 +211,28 @@
 		}
 	}
 
-	function updateCarpet () {
-		if ( this.id === 'inherit' ) {
-			inheritCount = this.value;
-		}
-		if ( this.id === 'dispersion' ) {
-			dispersion = this.value;
-		}
-
-		reset();
-	}
 
 	for ( let control of controlsRotate ) {
-		control.addEventListener( 'change', updateRotationAxies )
+		control.addEventListener( 'change', updateAutoRotation )
 	}
 
 	for ( let control of controlsRange ) {
-		control.addEventListener( 'change', updateAnimation );
-		control.addEventListener( 'mousemove', updateAnimation );
+		control.addEventListener( 'change', updateSpeedOrZoom );
+		control.addEventListener( 'mousemove', updateSpeedOrZoom );
 	}
 
-	for ( let control of controlsRange1 ) {
-		control.addEventListener( 'change', updateCarpet );
+
+
+	function showTetra () {
+		triangleVertices = Tetra.triangleVertices();
+		triangleFaces = Tetra.triangleFaces();
+		pointsCount = triangleFaces.length;
+
+		console.log( triangleVertices, triangleFaces );
+		reset();
 	}
 
+	tetraButton.addEventListener( 'click', showTetra );
 
 
 	runAnimation();
