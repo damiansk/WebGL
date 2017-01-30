@@ -9,6 +9,7 @@
 	const controlsRange1 = document.querySelectorAll( '.range1' );
 
 	const tetraButton = document.querySelector( '#tetra' );
+	const carpetButton = document.querySelector( '#carpet' );
 
 	let animationAxies = {
 		x: false,
@@ -228,11 +229,19 @@
 		triangleFaces = Tetra.triangleFaces();
 		pointsCount = triangleFaces.length;
 
-		console.log( triangleVertices, triangleFaces );
 		reset();
 	}
 
+	function showCarpet() {
+		triangleVertices = Carpet.triangleVertices();
+		triangleFaces = Carpet.triangleFaces();
+		pointsCount = triangleFaces.length;
+
+		reset();
+	}
+	
 	tetraButton.addEventListener( 'click', showTetra );
+	carpetButton.addEventListener( 'click', showCarpet );
 
 
 	runAnimation();
