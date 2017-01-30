@@ -10,6 +10,7 @@
 
 	const tetraButton = document.querySelector( '#tetra' );
 	const carpetButton = document.querySelector( '#carpet' );
+	const eggButton = document.querySelector( '#egg' );
 
 	let animationAxies = {
 		x: false,
@@ -35,7 +36,7 @@
 	let triangleFaces = [];
 
 	let rotationSpeed = 0.001;
-	let zoomRatio = -1550;
+	let zoomRatio = -200;
 
 	let animationID;
 
@@ -239,9 +240,18 @@
 
 		reset();
 	}
+
+	function showEgg() {
+		triangleVertices = Egg.triangleVertices();
+		triangleFaces = Egg.triangleFaces();
+		pointsCount = triangleFaces.length;
+
+		reset();
+	}
 	
 	tetraButton.addEventListener( 'click', showTetra );
 	carpetButton.addEventListener( 'click', showCarpet );
+	eggButton.addEventListener( 'click', showEgg );
 
 
 	runAnimation();
