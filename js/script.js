@@ -252,6 +252,17 @@
 		}
 	}
 
+	function updateCarpet () {
+		if ( this.id === 'inherit' ) {
+			Carpet.inheritCount = this.value;
+		}
+		if ( this.id === 'dispersion' ) {
+			Carpet.dispersion = this.value;
+		}
+
+		showCarpet();
+	}
+
 
 	function showTetra () {
 		triangleVertices = Tetra.triangleVertices();
@@ -297,6 +308,10 @@
 	tetraButton.addEventListener( 'click', showTetra );
 	carpetButton.addEventListener( 'click', showCarpet );
 	eggButton.addEventListener( 'click', showEgg );
+
+	for ( let control of controlsRange1 ) {
+		control.addEventListener( 'change', updateCarpet );
+	}
 
 
 	runAnimation();
