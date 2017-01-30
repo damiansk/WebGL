@@ -1,5 +1,5 @@
 const Egg = {
-	n: 40,
+	n: 20,
 	triangleVertices () {
 		let triangleVerticlesArray = [];
 

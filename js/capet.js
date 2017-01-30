@@ -65,7 +65,7 @@ const Carpet = {
 		return triangleVerticlesArray;
 	},
 	triangleFaces() {
-		const triangleFaces = new Array( this.squareCount * 2 * 3 );
+		const triangleFaces = new Array( Math.pow( 8, this.inheritCount ) * 2 * 3 );
 		const length = triangleFaces.length;
 
 		for (let i = 0, x = 0; i < length; i += 6, x += 4) {

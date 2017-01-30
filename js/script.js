@@ -7,6 +7,7 @@
 	const controlsRotate = document.querySelectorAll( '.rotate' );
 	const controlsRange = document.querySelectorAll( '.range' );
 	const controlsRange1 = document.querySelectorAll( '.range1' );
+	const zoom = document.getElementById( 'zoom' );
 
 	const tetraButton = document.querySelector( '#tetra' );
 	const carpetButton = document.querySelector( '#carpet' );
@@ -206,6 +207,7 @@
 
 	function updateSpeedOrZoom () {
 		if ( this.id === 'zoom' ) {
+			zoomRatio = this.value;
 			MATRIX.translateZ( matrixView, this.value );
 		}
 		if ( this.id === 'speed' ) {
@@ -223,12 +225,44 @@
 		control.addEventListener( 'mousemove', updateSpeedOrZoom );
 	}
 
+	function eggZoom( isEgg ) {
+		if ( isEgg === true ) {
+			zoom.value = "-50";
+			zoom.max = "-10";
+			zoom.min = "-100";
+		} else {
+			zoom.value = "-200";
+			zoom.max = "-100";
+			zoom.min = "-200";
+		}
+	}
+
+	function isCarpet( temp ) {
+		if ( temp === true ) {
+			for ( let control of controlsRange1 ) {
+				control.disabled = false;
+			}
+			zoom.value = "-50";
+			zoom.max = "-10";
+			zoom.min = "-100";
+		} else {
+			for ( let control of controlsRange1 ) {
+				control.disabled = true;
+			}
+		}
+	}
 
 
 	function showTetra () {
 		triangleVertices = Tetra.triangleVertices();
 		triangleFaces = Tetra.triangleFaces();
 		pointsCount = triangleFaces.length;
+
+
+		zoomRatio = -200;
+		eggZoom( false );
+
+		isCarpet( false );
 
 		reset();
 	}
@@ -238,6 +272,12 @@
 		triangleFaces = Carpet.triangleFaces();
 		pointsCount = triangleFaces.length;
 
+
+		zoomRatio = -200;
+		eggZoom( false );
+
+		isCarpet( true );
+
 		reset();
 	}
 
@@ -245,6 +285,11 @@
 		triangleVertices = Egg.triangleVertices();
 		triangleFaces = Egg.triangleFaces();
 		pointsCount = triangleFaces.length;
+
+		zoomRatio = -50;
+		eggZoom( true );
+
+		isCarpet( false );
 
 		reset();
 	}
