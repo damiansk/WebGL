@@ -255,10 +255,10 @@
 
 	function updateCarpet () {
 		if ( this.id === 'inherit' ) {
-			Carpet.inheritCount = this.value;
+			Carpet.setInheritCount( this.value );
 		}
 		if ( this.id === 'dispersion' ) {
-			Carpet.dispersion = this.value;
+			Carpet.setDispersion( this.value );
 		}
 
 		showCarpet();
