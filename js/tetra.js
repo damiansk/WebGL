@@ -1,7 +1,7 @@
 'use strict';
 
 const Tetra = ( function () {
-
+//TODO Generate equilateral triangle
 	function _triangleVertices () {
 		return [
 			-50, -50, -50,
