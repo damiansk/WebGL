@@ -1,29 +1,42 @@
-const Carpet = {
-	dispersion: 20,
-	inheritCount: 2,
-	squareCount: 0,
-	setTriangleVerticles(pointCoor, width) {
+'use strict';
+
+const Carpet = ( function () {
+
+	let dispersion = 20;
+	let inheritCount = 2;
+	let squareCount = 0;
+
+	function _setDispersion ( _dispersion ) {
+		dispersion = _dispersion;
+	}
+
+	function _setInheritCount ( _inheritCount ) {
+		inheritCount = _inheritCount;
+	}
+
+	function setTriangleVerticles( pointCoor, width ) {
 		const newWidth = width / 2;
 
-		let z = Math.random() * ( this.dispersion / ( this.inheritCount * 2 ) );
-		let z1 = Math.random() * ( this.dispersion / ( this.inheritCount * 2 ) );
+		let z = Math.random() * ( dispersion / ( inheritCount * 2 ) );
+		let z1 = Math.random() * ( dispersion / ( inheritCount * 2 ) );
 
-		const rand = ( Math.random() * this.dispersion ) - ( this.dispersion / 2 );
+		//TODO Better triangle dispersion on Z axi
+		const rand = ( Math.random() * dispersion ) - ( dispersion / 2 );
 
-		if (rand > 0) {
+		if ( rand > 0 ) {
 			z *= -1;
 		} else {
 			z1 *= -1;
 		}
 
-		let color1 = Math.random();
-		let color2 = Math.random();
-		let color3 = Math.random();
+		const color1 = Math.random();
+		const color2 = Math.random();
+		const color3 = Math.random();
 
 		pointCoor[0] += rand;
 		pointCoor[1] += rand;
 
-		let vertex = [
+		return [
 			pointCoor[0] + newWidth, pointCoor[1] + newWidth, -z1,
 			color1, color2, color3,
 			pointCoor[0] - newWidth, pointCoor[1] + newWidth, -z,
@@ -33,10 +46,9 @@ const Carpet = {
 			pointCoor[0] + newWidth, pointCoor[1] - newWidth, z,
 			color1, 0, color3
 		];
+	}
 
-		return vertex;
-	},
-	triangleVertices (x = 0, y = 0, width = 100, nesting = this.inheritCount ) {
+	function _triangleVertices (x = 0, y = 0, width = 100, nesting = inheritCount ) {
 		let triangleVerticlesArray = [];
 		const newWith = width / 3;
 		const points = [
@@ -51,22 +63,23 @@ const Carpet = {
 		];
 
 		if (--nesting > 0) {
-			for (let point of points) {
+			for ( let point of points ) {
 				triangleVerticlesArray = triangleVerticlesArray.concat(
-								this.triangleVertices(point[0], point[1], newWith, nesting) );
+					_triangleVertices( point[0], point[1], newWith, nesting ) );
 			}
 		} else {
-			for (let point of points) {
-				this.squareCount++;
-				triangleVerticlesArray = triangleVerticlesArray.concat( this.setTriangleVerticles(point, newWith) );
+			for ( let point of points ) {
+				squareCount++;
+				triangleVerticlesArray = triangleVerticlesArray.concat( setTriangleVerticles( point, newWith ) );
 			}
 		}
 
 		return triangleVerticlesArray;
-	},
-	triangleFaces() {
-		const triangleFaces = new Array( Math.pow( 8, this.inheritCount ) * 2 * 3 );
-		const length = triangleFaces.length;
+	}
+
+	function _triangleFaces() {
+		const length = Math.pow( 8, inheritCount ) * 2 * 3;
+		const triangleFaces = new Array( length );
 
 		for (let i = 0, x = 0; i < length; i += 6, x += 4) {
 			triangleFaces[i] = x;
@@ -79,4 +92,11 @@ const Carpet = {
 
 		return triangleFaces;
 	}
-};
+
+	return {
+		triangleVertices: _triangleVertices,
+		triangleFaces: _triangleFaces,
+		setDispersion: _setDispersion,
+		setInheritCount: _setInheritCount
+	}
+} () );
