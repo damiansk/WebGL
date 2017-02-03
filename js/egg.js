@@ -10,7 +10,7 @@ const Egg = {
 
 		let color = [0, 0, 0];
 
-		for (let i = 0; i < this.n * this.n + 20; i++) {
+		for (let i = 0; i < this.n * this.n + 10; i++) {
 			u = (i % this.n) / (this.n - 1.0);
 			v = (i / this.n) / (this.n - 1.0);
 
@@ -31,12 +31,12 @@ const Egg = {
 		const triangleFaces = [];
 
 		let x = 0;
-		for (let i = 0; i < this.n * this.n - this.n + 20; i++) {
+		for (let i = 0; i < this.n * this.n - this.n + 10; i++) {
 			triangleFaces[x++] = i;
 			triangleFaces[x++] = i + 1;
 			triangleFaces[x++] = i + this.n;
 		}
-		for (let i = 0; i < this.n * this.n - this.n - 1 + 20; i++) {
+		for (let i = 0; i < this.n * this.n - this.n - 1 + 10; i++) {
 			triangleFaces[x++] = i + 1;
 			triangleFaces[x++] = i + 1 + this.n;
 			triangleFaces[x++] = i + this.n;

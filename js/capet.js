@@ -1,5 +1,5 @@
 const Carpet = {
-	dispersion: 0,
+	dispersion: 20,
 	inheritCount: 2,
 	squareCount: 0,
 	setTriangleVerticles(pointCoor, width) {
