@@ -1,7 +1,8 @@
 'use strict';
 
-const Tetra = {
-	triangleVertices () {
+const Tetra = ( function () {
+
+	function _triangleVertices () {
 		return [
 			-50, -50, -50,
 			1, 0, 0,
@@ -15,8 +16,9 @@ const Tetra = {
 			-50, -50, 50,
 			1, 1, 1
 		]
-	},
-	triangleFaces () {
+	}
+
+	function _triangleFaces () {
 		return [
 			0, 1, 2,
 			0, 1, 3,
@@ -24,4 +26,9 @@ const Tetra = {
 			1, 2, 3
 		]
 	}
-};
+
+	return {
+		triangleVertices: _triangleVertices,
+		triangleFaces: _triangleFaces
+	}
+} () );
