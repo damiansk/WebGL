@@ -22,9 +22,9 @@ const Egg = ( function () {
 			u = ( i % n ) / ( n - 1.0 );
 			v = ( i / n ) / ( n - 1.0 );
 
-			eggPoint[0] = (-90 * (u ** 5) + 225 * (u ** 4) - 270 * (u ** 3) + 180 * (u ** 2) - 45 * u) * Math.cos( Math.PI * v );
-			eggPoint[1] = 160 * (u ** 4) - 320 * (u ** 3) + 160 * (u ** 2) - 5;
-			eggPoint[2] = (-90 * (u ** 5) + 225 * (u ** 4) - 270 * (u ** 3) + 180 * (u ** 2) - 45 * u) * Math.sin( Math.PI * v );
+			eggPoint[0] = (-90 * Math.pow(u, 5) + 225 * Math.pow(u, 4) - 270 * Math.pow(u, 3) + 180 * Math.pow(u, 2) - 45 * u) * Math.cos( Math.PI * v );
+			eggPoint[1] = 160 * Math.pow(u, 4) - 320 * Math.pow(u, 3) + 160 * Math.pow(u, 2) - 5;
+			eggPoint[2] = (-90 * Math.pow(u, 5) + 225 * Math.pow(u, 4) - 270 * Math.pow(u, 3) + 180 * Math.pow(u, 2) - 45 * u) * Math.sin( Math.PI * v );
 
 			color[0] = Math.random();
 			color[1] = Math.random();

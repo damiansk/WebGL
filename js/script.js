@@ -23,6 +23,9 @@
 	let position;
 	let color;
 
+	let sampler;
+	let uv;
+
 	let triangleVertexBuffer = [];
 	let triangleFacesBuffer = [];
 	let pointsCount = 0;
@@ -37,15 +40,13 @@
 	let triangleVertices = [];
 	let triangleFaces = [];
 
+	let texture;
+	let isTexture = false;
+
 	let rotationSpeed = 0.001;
 	let zoomRatio = -200;
 
 	let animationID;
-
-
-	let inheritCount = 2;
-	let dispersion = 50;
-
 
 
 	function gl_getContext ( canvas ) {
@@ -66,24 +67,36 @@
 
 
 	function gl_initShaders () {
-		const vertexShader = "\n\
+		const vertexShader = `\n\
 			attribute vec3 position;\n\
 			uniform mat4 PosMatrix;\n\
 			uniform mat4 MovMatrix;\n\
 			uniform mat4 ViewMatrix; \n\
-			attribute vec3 color;\n\
-			varying vec3 vColor;\n\
+			${
+				isTexture ?
+					'attribute vec2 uv;\n\
+					varying vec2 vUV;\n\ '
+				:
+					'attribute vec3 color;\n\
+					varying vec3 vColor;\n\ '
+			}
 			void main(void) {\n\
 				gl_Position = PosMatrix * ViewMatrix * MovMatrix * vec4(position, 1.);\n\ \
-				vColor = color;\n\
-			}";
+				${ isTexture ? 'vUV = uv' : 'vColor = color'};\n\
+			}`;
 
-		const fragmentShader = "\n\
+		const fragmentShader = `\n\
 			precision mediump float;\n\
-			varying vec3 vColor;\n\
+			${ 
+				isTexture ?
+				'uniform sampler2D sampler;\n\
+				varying vec2 vUV;\n\ '
+				:
+				'varying vec3 vColor;\n\ '
+			}
 			void main(void) {\n\
-				gl_FragColor = vec4(vColor, 1.);\n\
-			}";
+				gl_FragColor =  ${ isTexture ? 'texture2D(sampler, vUV)' : 'vec4(vColor, 1.)'};\n\
+			}`;
 
 		const getShader = function( source, type, typeString ) {
 			const shader = gl_ctx.createShader( type );
@@ -106,36 +119,65 @@
 
 		gl_ctx.linkProgram( shaderProgram );
 
-		PosMatrix = gl_ctx.getUniformLocation( shaderProgram, "PosMatrix" );
-		MovMatrix = gl_ctx.getUniformLocation( shaderProgram, "MovMatrix" );
-		ViewMatrix = gl_ctx.getUniformLocation( shaderProgram, "ViewMatrix" );
+		PosMatrix = gl_ctx.getUniformLocation( shaderProgram, 'PosMatrix' );
+		MovMatrix = gl_ctx.getUniformLocation( shaderProgram, 'MovMatrix' );
+		ViewMatrix = gl_ctx.getUniformLocation( shaderProgram, 'ViewMatrix' );
+
+		sampler = gl_ctx.getUniformLocation( shaderProgram, 'sampler' );
+		uv = gl_ctx.getAttribLocation( shaderProgram, 'uv' );
+		color = gl_ctx.getAttribLocation( shaderProgram, 'color' );
 
 		position = gl_ctx.getAttribLocation( shaderProgram, 'position' );
-		color = gl_ctx.getAttribLocation( shaderProgram, 'color' );
+
+		if ( isTexture ) {
+			gl_ctx.enableVertexAttribArray( uv );
+		} else {
+			gl_ctx.enableVertexAttribArray( color );
+		}
+
 		gl_ctx.enableVertexAttribArray( position );
-		gl_ctx.enableVertexAttribArray( color );
 		gl_ctx.useProgram( shaderProgram );
+
+		if ( isTexture ) {
+			gl_ctx.uniform1i( sampler, 0 );
+		}
 	}
 
 	function gl_initBuffers() {
 		triangleVertexBuffer = gl_ctx.createBuffer();
 		gl_ctx.bindBuffer( gl_ctx.ARRAY_BUFFER, triangleVertexBuffer );
-		gl_ctx.bufferData( gl_ctx.ARRAY_BUFFER,
-			new Float32Array( triangleVertices ),
-			gl_ctx.STATIC_DRAW ) ;
+		gl_ctx.bufferData( gl_ctx.ARRAY_BUFFER, new Float32Array( triangleVertices ), gl_ctx.STATIC_DRAW ) ;
 
 		triangleFacesBuffer = gl_ctx.createBuffer();
 		gl_ctx.bindBuffer( gl_ctx.ELEMENT_ARRAY_BUFFER, triangleFacesBuffer );
-		gl_ctx.bufferData( gl_ctx.ELEMENT_ARRAY_BUFFER,
-			new Uint16Array( triangleFaces ),
-			gl_ctx.STATIC_DRAW );
+		gl_ctx.bufferData( gl_ctx.ELEMENT_ARRAY_BUFFER, new Uint16Array( triangleFaces ), gl_ctx.STATIC_DRAW );
 	}
 
 	function gl_setMatrix () {
-		matrixProjection = MATRIX.getProjection(40,gl_canvas.width/gl_canvas.height, 1, 2500);
+		matrixProjection = MATRIX.getProjection( 40,gl_canvas.width/gl_canvas.height, 1, 2500 );
 		matrixMovement = MATRIX.getIdentityMatrix();
 		matrixView = MATRIX.getIdentityMatrix();
-		MATRIX.translateZ(matrixView, zoomRatio);
+		MATRIX.translateZ( matrixView, zoomRatio );
+	}
+
+	function gl_initTexture ( fileName ) {
+		const img = new Image();
+		img.src = fileName;
+		img.webglTexture = false;
+
+		img.onload = function() {
+			const texture = gl_ctx.createTexture();
+
+			gl_ctx.pixelStorei( gl_ctx.UNPACK_FLIP_Y_WEBGL, true );
+			gl_ctx.bindTexture( gl_ctx.TEXTURE_2D, texture );
+			gl_ctx.texParameteri( gl_ctx.TEXTURE_2D, gl_ctx.TEXTURE_MIN_FILTER, gl_ctx.LINEAR );
+			gl_ctx.texParameteri( gl_ctx.TEXTURE_2D, gl_ctx.TEXTURE_MAG_FILTER, gl_ctx.LINEAR );
+
+			gl_ctx.texImage2D( gl_ctx.TEXTURE_2D, 0, gl_ctx.RGBA, gl_ctx.RGBA, gl_ctx.UNSIGNED_BYTE, img );
+			gl_ctx.bindTexture( gl_ctx.TEXTURE_2D, null );
+			img.webglTexture = texture;
+		};
+		return img;
 	}
 
 	function gl_draw() {
@@ -146,29 +188,38 @@
 		let timeOld = 0;
 
 		const animate = function ( time ) {
-			const dAngle = rotationSpeed * (time - timeOld);
+			const dAngle = rotationSpeed * ( time - timeOld );
 
 			if ( animationAxies.x === true ) {
-				MATRIX.rotateX(matrixMovement, dAngle);
+				MATRIX.rotateX( matrixMovement, dAngle );
 			}
 			if ( animationAxies.y === true ) {
-				MATRIX.rotateY(matrixMovement, dAngle);
+				MATRIX.rotateY( matrixMovement, dAngle );
 			}
 			if ( animationAxies.z === true ) {
-				MATRIX.rotateZ(matrixMovement, dAngle);
+				MATRIX.rotateZ( matrixMovement, dAngle );
 			}
 
 			timeOld = time;
 
-			gl_ctx.viewport(0.0, 0.0, gl_canvas.width, gl_canvas.height);
-			gl_ctx.clear(gl_ctx.COLOR_BUFFER_BIT | gl_ctx.DEPTH_BUFFER_BIT);
+			gl_ctx.viewport( 0.0, 0.0, gl_canvas.width, gl_canvas.height );
+			gl_ctx.clear( gl_ctx.COLOR_BUFFER_BIT | gl_ctx.DEPTH_BUFFER_BIT );
 
-			gl_ctx.uniformMatrix4fv(PosMatrix, false, matrixProjection);
-			gl_ctx.uniformMatrix4fv(MovMatrix, false, matrixMovement);
-			gl_ctx.uniformMatrix4fv(ViewMatrix, false, matrixView);
+			gl_ctx.uniformMatrix4fv( PosMatrix, false, matrixProjection );
+			gl_ctx.uniformMatrix4fv( MovMatrix, false, matrixMovement);
+			gl_ctx.uniformMatrix4fv( ViewMatrix, false, matrixView );
 
-			gl_ctx.vertexAttribPointer(position, 3, gl_ctx.FLOAT, false, 4*(3+3), 0);
-			gl_ctx.vertexAttribPointer(color, 3, gl_ctx.FLOAT, false, 4*(3+3), 3*4);
+			if ( isTexture ) {
+				if ( texture.webglTexture ) {
+					gl_ctx.activeTexture( gl_ctx.TEXTURE0 );
+					gl_ctx.bindTexture( gl_ctx.TEXTURE_2D, texture.webglTexture );
+				}
+				gl_ctx.vertexAttribPointer( position, 3, gl_ctx.FLOAT, false, 4*(3+2), 0 );
+				gl_ctx.vertexAttribPointer( uv, 2, gl_ctx.FLOAT, false, 4*(3+2), 3*4 );
+			} else {
+				gl_ctx.vertexAttribPointer( position, 3, gl_ctx.FLOAT, false, 4 * (3 + 3), 0 );
+				gl_ctx.vertexAttribPointer( color, 3, gl_ctx.FLOAT, false, 4 * (3 + 3), 3 * 4 );
+			}
 
 			gl_ctx.bindBuffer( gl_ctx.ARRAY_BUFFER, triangleVertexBuffer );
 			gl_ctx.bindBuffer( gl_ctx.ELEMENT_ARRAY_BUFFER, triangleFacesBuffer );
@@ -186,9 +237,14 @@
 
 
 	function runAnimation () {
+		if ( isTexture ) {
+			texture = gl_initTexture( 'img/texture1.jpg' );
+		}
+
 		gl_initShaders();
 		gl_initBuffers();
 		gl_setMatrix();
+
 		gl_draw();
 	}
 
@@ -269,6 +325,7 @@
 		triangleVertices = Tetra.triangleVertices();
 		triangleFaces = Tetra.triangleFaces();
 		pointsCount = triangleFaces.length;
+		isTexture = false;
 
 
 		zoomRatio = -200;
@@ -283,6 +340,7 @@
 		triangleVertices = Carpet.triangleVertices();
 		triangleFaces = Carpet.triangleFaces();
 		pointsCount = triangleFaces.length;
+		isTexture = false;
 
 
 		zoomRatio = -200;
@@ -297,6 +355,8 @@
 		triangleVertices = Egg.triangleVertices();
 		triangleFaces = Egg.triangleFaces();
 		pointsCount = triangleFaces.length;
+		isTexture = false;
+
 
 		zoomRatio = -50;
 		eggZoom( true );
@@ -307,9 +367,11 @@
 	}
 
 	function showBox() {
-		triangleVertices = Egg.triangleVertices();
-		triangleFaces = Egg.triangleFaces();
+		triangleVertices = Box.triangleVertices();
+		triangleFaces = Box.triangleFaces();
 		pointsCount = triangleFaces.length;
+		isTexture = true;
+
 
 		zoomRatio = -50;
 		eggZoom( true );
@@ -323,6 +385,7 @@
 	tetraButton.addEventListener( 'click', showTetra );
 	carpetButton.addEventListener( 'click', showCarpet );
 	eggButton.addEventListener( 'click', showEgg );
+	boxButton.addEventListener( 'click', showBox );
 
 	for ( let control of controlsRange1 ) {
 		control.addEventListener( 'change', updateCarpet );
