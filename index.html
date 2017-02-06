@@ -5,44 +5,66 @@
         <title>WebGL</title>
 
         <link rel="stylesheet" href="css/style.css">
+        <link href="https://fonts.googleapis.com/css?family=Pangolin" rel="stylesheet">
     </head>
     <body>
         <header>
             <h1>WebGL - 3D</h1>
         </header>
         <main>
-            <div>
-                <button id="tetra">Czworoscian</button>
-                <button id="carpet">Dywan</button>
-                <button id="egg">Jajko</button>
-                <button id="box">Pudelko</button>
+            <nav class="inline objects-panel">
+                <ul>
+                    <li>
+                        <div class="object" id="tetra">Czworoscian</div>
+                    </li>
+                    <li>
+                        <div class="object" id="carpet">Dywan</div>
+                    </li>
+                    <li>
+                        <div class="object" id="egg">Jajko</div>
+                    </li>
+                    <li>
+                        <div class="object" id="box">Pudelko</div>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="inline">
+                <canvas id="canvas" width="800" height="600">GG WP</canvas>
             </div>
-            <canvas id="canvas" width="800" height="600">GG WP</canvas>
-            <div class="error"></div>
-            <div class="control-panel">
-                <div class="control-panel-group">
-                    <label for="axisX">&nbsp;Obrot X</label>
+
+            <div class="control-panel inline">
+                <fieldset class="control-panel-group">
+                    <legend>Osie obrotu</legend>
+                    <label for="axisX">Obrot X</label>
                     <input id="axisX" class="rotate" data-axis="x" type="checkbox"/>
-                    <label for="axisY">&nbsp;Obrot Y</label>
+                    <br/>
+                    <label for="axisY">Obrot Y</label>
                     <input id="axisY" class="rotate" data-axis="y" type="checkbox" checked/>
-                    <label for="axisZ">&nbsp;Obrot Z</label>
+                    <br/>
+                    <label for="axisZ">Obrot Z</label>
                     <input id="axisZ" class="rotate" data-axis="z" type="checkbox"/>
-                </div>
-                <div class="control-panel-group">
-                    <label for="speed">&nbsp;&nbsp;&nbsp;Predkosc</label>
+                </fieldset>
+                <fieldset class="control-panel-group">
+                    <legend>Animacja</legend>
+                    <label for="speed">Predkosc</label>
                     <input id="speed" class="range" type="range" value="0.001" min="0" max="0.01" step="0.0001"/>
-                    <label for="zoom">&nbsp;&nbsp;&nbsp;Powiekszenie</label>
+                    <label for="zoom">Powiekszenie</label>
                     <input id="zoom" class="range" type="range" min="-300" max="-100" step="1"/>
-                </div>
-                <div class="control-panel-group">
-                    <label for="inherit">&nbsp;&nbsp;&nbsp;Zagniezdzenia</label>
+                </fieldset>
+                <fieldset class="control-panel-group">
+                    <legend>Zmienne objektu</legend>
+                    <label for="inherit">Zagniezdzenia</label>
                     <input id="inherit" class="range1" type="range" value="2" min="1" max="4" step="1"/>
-                    <label for="dispersion">&nbsp;&nbsp;&nbsp;Rozrzut</label>
+                    <label for="dispersion">Rozrzut</label>
                     <input id="dispersion" class="range1" type="range" value="20" min="0" max="100" step="0"/>
-                </div>
+                </fieldset>
             </div>
+
+
+            <div class="error"></div>
         </main>
-        <footer>Wykonal: <b>Damian Stolarek 218148</b></footer>
+<!--        <footer>Wykonal: <b>Damian Stolarek 218148</b></footer>-->
 
         <script src="js/matrix.js"></script>
         <script src="js/tetra.js"></script>
