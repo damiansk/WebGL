@@ -26,6 +26,7 @@ main {
     vertical-align: middle;
 }
 
+
 .objects-panel ul,li {
     list-style: none;
     margin: 0;
@@ -60,7 +61,7 @@ main {
 .control-panel-group {
     display: block;
     margin: 40px 10px;
-    width: 160px;
+    max-width: 160px;
 }
 
 .pic-min {

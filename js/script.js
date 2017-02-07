@@ -44,7 +44,7 @@
 	let isTexture = false;
 
 	let rotationSpeed = 0.001;
-	let zoomRatio = -200;
+	let zoomRatio = -25;
 
 	let animationID;
 
@@ -283,6 +283,7 @@
 	}
 
 	function eggZoom( isEgg ) {
+/*
 		if ( isEgg === true ) {
 			zoom.value = "-50";
 			zoom.max = "-10";
@@ -292,9 +293,11 @@
 			zoom.max = "-100";
 			zoom.min = "-200";
 		}
+*/
 	}
 
 	function isCarpet( temp ) {
+/*
 		if ( temp === true ) {
 			for ( let control of controlsRange1 ) {
 				control.disabled = false;
@@ -307,6 +310,7 @@
 				control.disabled = true;
 			}
 		}
+*/
 	}
 
 	function updateCarpet () {
@@ -327,8 +331,6 @@
 		pointsCount = triangleFaces.length;
 		isTexture = false;
 
-
-		zoomRatio = -200;
 		eggZoom( false );
 
 		isCarpet( false );
@@ -342,8 +344,6 @@
 		pointsCount = triangleFaces.length;
 		isTexture = false;
 
-
-		zoomRatio = -200;
 		eggZoom( false );
 
 		isCarpet( true );
@@ -357,8 +357,6 @@
 		pointsCount = triangleFaces.length;
 		isTexture = false;
 
-
-		zoomRatio = -50;
 		eggZoom( true );
 
 		isCarpet( false );
@@ -372,8 +370,6 @@
 		pointsCount = triangleFaces.length;
 		isTexture = true;
 
-
-		zoomRatio = -50;
 		eggZoom( true );
 
 		isCarpet( false );

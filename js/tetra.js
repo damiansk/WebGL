@@ -4,16 +4,16 @@ const Tetra = ( function () {
 //TODO Generate equilateral triangle
 	function _triangleVertices () {
 		return [
-			-50, -50, -50,
+			-5, -5, -5,
 			1, 0, 0,
 
-			50, -50, -50,
+			5, -5, -5,
 			0, 1, 0,
 
-			-50, 50, -50,
+			-5, 5, -5,
 			0, 0, 1,
 
-			-50, -50, 50,
+			-5, -5, 5,
 			1, 1, 1
 		]
 	}

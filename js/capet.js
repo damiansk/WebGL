@@ -2,7 +2,7 @@
 
 const Carpet = ( function () {
 
-	let dispersion = 20;
+	let dispersion = 10;
 	let inheritCount = 2;
 	let squareCount = 0;
 
@@ -24,9 +24,9 @@ const Carpet = ( function () {
 		const rand = ( Math.random() * dispersion ) - ( dispersion / 2 );
 
 		if ( rand > 0 ) {
-			z *= -1;
+			z *= -0.0001;
 		} else {
-			z1 *= -1;
+			z1 *= -0.0001;
 		}
 
 		const color1 = Math.random();
@@ -48,7 +48,7 @@ const Carpet = ( function () {
 		];
 	}
 
-	function _triangleVertices ( x = 0, y = 0, width = 100, nesting = inheritCount ) {
+	function _triangleVertices ( x = 0, y = 0, width = 10, nesting = inheritCount ) {
 		let triangleVerticlesArray = [];
 		const newWith = width / 3;
 		const points = [
