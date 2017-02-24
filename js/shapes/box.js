@@ -1,7 +1,7 @@
 'use strict';
 
-const Box = {
-	triangleVertices () {
+const Box = ( function() {
+	function triangleVertices() {
 		return [
 			-4,-4,-4,     0, 0,
 			4,-4,-4,     1, 0,
@@ -28,8 +28,9 @@ const Box = {
 			4, 4, 4,     1, 1,
 			4, 4,-4,     0, 1
 		];
-	},
-	triangleFaces () {
+	}
+
+	function triangleFaces () {
 		return [
 			0,1,2,
 			0,2,3,
@@ -45,4 +46,9 @@ const Box = {
 			20,22,23
 		];
 	}
-};
+
+	return {
+		triangleVertices: triangleVertices,
+		triangleFaces: triangleFaces
+	}
+} );
