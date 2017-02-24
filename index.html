@@ -12,7 +12,7 @@
             <h1>WebGL - 3D</h1>
         </header>
         <main>
-            <nav class="inline objects-panel">
+            <nav class="panel panel__objects">
                 <ul>
                     <li>
                         <div class="object" id="tetra">Czworoscian</div>
@@ -29,12 +29,12 @@
                 </ul>
             </nav>
 
-            <div class="inline">
+            <div class="panel">
                 <canvas id="canvas" width="800" height="600">GG WP</canvas>
             </div>
 
-            <div class="control-panel inline">
-                <fieldset class="control-panel-group">
+            <div class="panel panel__control">
+                <fieldset class="panel__control__group">
                     <legend>Osie obrotu</legend>
                     <label for="axisX">Obrot X</label>
                     <input id="axisX" class="rotate" data-axis="x" type="checkbox"/>
@@ -45,22 +45,21 @@
                     <label for="axisZ">Obrot Z</label>
                     <input id="axisZ" class="rotate" data-axis="z" type="checkbox"/>
                 </fieldset>
-                <fieldset class="control-panel-group">
+                <fieldset class="panel__control__group">
                     <legend>Animacja</legend>
                     <label for="speed">Predkosc</label>
                     <input id="speed" class="range" type="range" value="0.001" min="0" max="0.01" step="0.0001"/>
                     <label for="zoom">Powiekszenie</label>
                     <input id="zoom" class="range" type="range" value="-25" min="-70" max="-10" step="1"/>
                 </fieldset>
-                <fieldset class="control-panel-group">
-                    <legend>Zmienne objektu</legend>
+                <fieldset class="panel__control__group panel__control__group_carpet">
+                    <legend>Zmienne dywanu</legend>
                     <label for="inherit">Zagniezdzenia</label>
-                    <input id="inherit" class="range1" type="range" value="2" min="1" max="4" step="1"/>
+                    <input id="inherit" class="range range_carpet" type="range" value="2" min="1" max="4" step="1"/>
                     <label for="dispersion">Rozrzut</label>
-                    <input id="dispersion" class="range1" type="range" value="20" min="0" max="100" step="0"/>
+                    <input id="dispersion" class="range range_carpet" type="range" value="20" min="0" max="100" step="0"/>
                 </fieldset>
             </div>
-
 
             <div class="error"></div>
         </main>
