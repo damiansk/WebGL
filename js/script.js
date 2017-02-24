@@ -2,12 +2,12 @@
 
 ( function () {
 
-	const gl_canvas = document.getElementById( 'canvas' );
-	const errorLog  = document.querySelector( '.error' );
-	const controlsRotate = document.querySelectorAll( '.rotate' );
-	const controlsRange = document.querySelectorAll( '.range' );
-	const controlsRange1 = document.querySelectorAll( '.range1' );
-	const zoom = document.getElementById( 'zoom' );
+	const gl_canvas = document.getElementById( 'canvas' ),
+		errorLog  = document.querySelector( '.error' ),
+		controlsRotate = document.querySelectorAll( '.rotate' ),
+		controlsRange = document.querySelectorAll( '.range' ),
+		controlsCarpet = document.querySelectorAll( '.range .range_carpet' ),
+		zoom = document.getElementById( 'zoom' );
 
 	const tetraButton = document.querySelector( '#tetra' );
 	const carpetButton = document.querySelector( '#carpet' );
@@ -47,6 +47,8 @@
 	let zoomRatio = -25;
 
 	let animationID;
+
+	let chosenObject = '';
 
 
 	function gl_getContext ( canvas ) {
@@ -282,36 +284,6 @@
 		control.addEventListener( 'mousemove', updateSpeedOrZoom );
 	}
 
-	function eggZoom( isEgg ) {
-/*
-		if ( isEgg === true ) {
-			zoom.value = "-50";
-			zoom.max = "-10";
-			zoom.min = "-100";
-		} else {
-			zoom.value = "-200";
-			zoom.max = "-100";
-			zoom.min = "-200";
-		}
-*/
-	}
-
-	function isCarpet( temp ) {
-/*
-		if ( temp === true ) {
-			for ( let control of controlsRange1 ) {
-				control.disabled = false;
-			}
-			zoom.value = "-50";
-			zoom.max = "-10";
-			zoom.min = "-100";
-		} else {
-			for ( let control of controlsRange1 ) {
-				control.disabled = true;
-			}
-		}
-*/
-	}
 
 	function updateCarpet () {
 		if ( this.id === 'inherit' ) {
@@ -331,10 +303,6 @@
 		pointsCount = triangleFaces.length;
 		isTexture = false;
 
-		eggZoom( false );
-
-		isCarpet( false );
-
 		reset();
 	}
 
@@ -343,10 +311,6 @@
 		triangleFaces = Carpet.triangleFaces();
 		pointsCount = triangleFaces.length;
 		isTexture = false;
-
-		eggZoom( false );
-
-		isCarpet( true );
 
 		reset();
 	}
@@ -357,10 +321,6 @@
 		pointsCount = triangleFaces.length;
 		isTexture = false;
 
-		eggZoom( true );
-
-		isCarpet( false );
-
 		reset();
 	}
 
@@ -369,10 +329,6 @@
 		triangleFaces = Box.triangleFaces();
 		pointsCount = triangleFaces.length;
 		isTexture = true;
-
-		eggZoom( true );
-
-		isCarpet( false );
 
 		reset();
 	}
@@ -383,7 +339,7 @@
 	eggButton.addEventListener( 'click', showEgg );
 	boxButton.addEventListener( 'click', showBox );
 
-	for ( let control of controlsRange1 ) {
+	for ( let control of controlsCarpet ) {
 		control.addEventListener( 'change', updateCarpet );
 	}
 
