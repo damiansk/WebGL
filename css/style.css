@@ -38,7 +38,7 @@ main {
     margin: 60px 10px 60px 10px;
 }
 
-.panel__objects .object {
+.panel__objects__object {
     background-color: #262525;
     border: none;
     color: darkgrey;
