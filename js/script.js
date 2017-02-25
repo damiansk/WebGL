@@ -7,7 +7,15 @@
 		controlsRotate = document.querySelectorAll( '.rotate' ),
 		controlsRange = document.querySelectorAll( '.range' ),
 		controlsCarpet = document.querySelectorAll( '.range .range_carpet' ),
-		zoom = document.getElementById( 'zoom' );
+		zoom = document.getElementById( 'zoom' ),
+		objectsButtons = document.getElementsByClassName('panel__objects__object');
+
+	const shapes = {
+		'carpet': Carpet,
+		'tetra': Tetra,
+		'box': Box,
+		'egg': Egg
+	};
 
 	const tetraButton = document.querySelector( '#tetra' );
 	const carpetButton = document.querySelector( '#carpet' );
@@ -41,7 +49,7 @@
 	let triangleFaces = [];
 
 	let texture;
-	let isTexture = false;
+	let isTextured = false;
 
 	let rotationSpeed = 0.001;
 	let zoomRatio = -25;
@@ -75,7 +83,7 @@
 			uniform mat4 MovMatrix;\n\
 			uniform mat4 ViewMatrix; \n\
 			${
-				isTexture ?
+				isTextured ?
 					'attribute vec2 uv;\n\
 					varying vec2 vUV;\n\ '
 				:
@@ -84,20 +92,20 @@
 			}
 			void main(void) {\n\
 				gl_Position = PosMatrix * ViewMatrix * MovMatrix * vec4(position, 1.);\n\ \
-				${ isTexture ? 'vUV = uv' : 'vColor = color'};\n\
+				${ isTextured ? 'vUV = uv' : 'vColor = color'};\n\
 			}`;
 
 		const fragmentShader = `\n\
 			precision mediump float;\n\
 			${ 
-				isTexture ?
+				isTextured ?
 				'uniform sampler2D sampler;\n\
 				varying vec2 vUV;\n\ '
 				:
 				'varying vec3 vColor;\n\ '
 			}
 			void main(void) {\n\
-				gl_FragColor =  ${ isTexture ? 'texture2D(sampler, vUV)' : 'vec4(vColor, 1.)'};\n\
+				gl_FragColor =  ${ isTextured ? 'texture2D(sampler, vUV)' : 'vec4(vColor, 1.)'};\n\
 			}`;
 
 		const getShader = function( source, type, typeString ) {
@@ -131,7 +139,7 @@
 
 		position = gl_ctx.getAttribLocation( shaderProgram, 'position' );
 
-		if ( isTexture ) {
+		if ( isTextured ) {
 			gl_ctx.enableVertexAttribArray( uv );
 		} else {
 			gl_ctx.enableVertexAttribArray( color );
@@ -140,7 +148,7 @@
 		gl_ctx.enableVertexAttribArray( position );
 		gl_ctx.useProgram( shaderProgram );
 
-		if ( isTexture ) {
+		if ( isTextured ) {
 			gl_ctx.uniform1i( sampler, 0 );
 		}
 	}
@@ -211,7 +219,7 @@
 			gl_ctx.uniformMatrix4fv( MovMatrix, false, matrixMovement);
 			gl_ctx.uniformMatrix4fv( ViewMatrix, false, matrixView );
 
-			if ( isTexture ) {
+			if ( isTextured ) {
 				if ( texture.webglTexture ) {
 					gl_ctx.activeTexture( gl_ctx.TEXTURE0 );
 					gl_ctx.bindTexture( gl_ctx.TEXTURE_2D, texture.webglTexture );
@@ -239,7 +247,7 @@
 
 
 	function runAnimation () {
-		if ( isTexture ) {
+		if ( isTextured ) {
 			texture = gl_initTexture( 'img/texture1.jpg' );
 		}
 
@@ -285,6 +293,26 @@
 	}
 
 
+	function showTetra () {
+		triangleVertices = Tetra.triangleVertices();
+		triangleFaces = Tetra.triangleFaces();
+		pointsCount = triangleFaces.length;
+		isTextured = false;
+
+		reset();
+	}
+
+	function showShape() {
+		const shape = shapes[this.dataset.shape];
+
+		triangleVertices = shape.triangleVertices();
+		triangleFaces = shape.triangleFaces();
+		pointsCount = triangleFaces.length;
+		isTextured = false;
+
+		reset();
+	}
+
 	function updateCarpet () {
 		if ( this.id === 'inherit' ) {
 			Carpet.setInheritCount( this.value );
@@ -293,53 +321,15 @@
 			Carpet.setDispersion( this.value );
 		}
 
-		showCarpet();
+		//showCarpet();
 	}
 
 
-	function showTetra () {
-		triangleVertices = Tetra.triangleVertices();
-		triangleFaces = Tetra.triangleFaces();
-		pointsCount = triangleFaces.length;
-		isTexture = false;
-
-		reset();
+	for ( const object of objectsButtons ) {
+		object.addEventListener( 'click', showShape );
 	}
 
-	function showCarpet() {
-		triangleVertices = Carpet.triangleVertices();
-		triangleFaces = Carpet.triangleFaces();
-		pointsCount = triangleFaces.length;
-		isTexture = false;
-
-		reset();
-	}
-
-	function showEgg() {
-		triangleVertices = Egg.triangleVertices();
-		triangleFaces = Egg.triangleFaces();
-		pointsCount = triangleFaces.length;
-		isTexture = false;
-
-		reset();
-	}
-
-	function showBox() {
-		triangleVertices = Box.triangleVertices();
-		triangleFaces = Box.triangleFaces();
-		pointsCount = triangleFaces.length;
-		isTexture = true;
-
-		reset();
-	}
-
-
-	tetraButton.addEventListener( 'click', showTetra );
-	carpetButton.addEventListener( 'click', showCarpet );
-	eggButton.addEventListener( 'click', showEgg );
-	boxButton.addEventListener( 'click', showBox );
-
-	for ( let control of controlsCarpet ) {
+	for ( const control of controlsCarpet ) {
 		control.addEventListener( 'change', updateCarpet );
 	}
 
